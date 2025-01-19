@@ -92,7 +92,7 @@
             <div class="hint">Adjust size if animation appears too big/small</div>
         </div>
 
-        <button onclick="uploadContent()">Upload</button>
+        <button id="uploadContent">Upload</button>
         <div id="status"></div>
         <a href="index.html" class="back-link">← Back to AR Viewer</a>
     </div>   
@@ -113,7 +113,7 @@
             }
             return url;
         }
-            document.getElementById('uploadButton').addEventListener('click', async () => {
+            document.getElementById('uploadContent').addEventListener('click', async () => {
             const markerUrl = document.getElementById('markerUrl').value;
             const animationUrl = document.getElementById('animationUrl').value;
             const scale = document.getElementById('scale').value;
