@@ -98,14 +98,12 @@
     </div>
 </body>
     <script type="module">
-        // Initialize Supabase
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
         const supabaseUrl = 'https://fdphjxbjnononpxljrgb.supabase.co';
         const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkcGhqeGJqbm9ub25weGxqcmdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxOTM1MzMsImV4cCI6MjA1Mjc2OTUzM30.4OAWrb2IOvq0lOOPplBzG-hGYrK5BfP-y9sCR4ac3Vc';
-        const supabase = createClient(
-            supabaseUrl,
-            supabaseAnonKey
-        );
+
+        export const supabase = createClient(supabaseUrl, supabaseAnonKey);
     </script>
     <script>
         // Convert Google Drive link to direct link
@@ -117,43 +115,29 @@
             return url;
         }
 
-        async function uploadContent() {
-        const status = document.getElementById('status');
-        const markerUrl = document.getElementById('markerUrl').value;
-        const animUrl = document.getElementById('animUrl').value;
-        const scale = document.getElementById('scale').value;
+        import { supabase } from './supabase-init.js'; // Adjust path if needed
 
-        if (!markerUrl || !animUrl) {
-            status.className = 'error';
-            status.textContent = 'Please provide both marker and animation URLs';
-            return;
-        }
-
+    async function uploadContent() {
         try {
-            const { error } = await supabase
-                .from('custom_markers')
-                .insert([
-                    {
-                        marker_url: getDirectLink(markerUrl),
-                        animation_url: getDirectLink(animUrl),
-                        scale: scale
-                    }
-                ]);
+            const { data, error } = await supabase.from('custom_markers').insert([
+                {
+                    marker_url: 'https://example.com',
+                    animation_url: 'https://example.com',
+                    scale: 1.0,
+                },
+            ]);
 
-            if (error) throw error;
-
-            status.className = 'success';
-            status.textContent = 'Upload successful! Redirecting...';
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 2000);
-
-        } catch (error) {
-            status.className = 'error';
-            status.textContent = 'Upload failed: ' + error.message;
-            console.error('Error details:', error);
+            if (error) {
+                console.error('Insert error:', error);
+            } else {
+                console.log('Insert success:', data);
+            }
+        } catch (e) {
+            console.error('Unexpected error:', e);
         }
     }
+
+    uploadContent();
          document.getElementById('uploadButton').addEventListener('click', uploadContent);
     </script>
 </html>
