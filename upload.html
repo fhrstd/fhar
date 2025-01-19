@@ -82,7 +82,7 @@
 
         <div class="form-group">
             <label for="animUrl">Animation URL:</label>
-            <input type="text" id="animUrl" placeholder="Paste Google Drive link for animation">
+            <input type="text" id="animationUrl" placeholder="Paste Google Drive link for animation">
             <div class="hint">This is what will appear when marker is detected</div>
         </div>
 
@@ -113,43 +113,43 @@
             }
             return url;
         }
-        async function uploadContent() {
-            const status = document.getElementById('status');
+            document.getElementById('uploadButton').addEventListener('click', async () => {
             const markerUrl = document.getElementById('markerUrl').value;
-            const animUrl = document.getElementById('animUrl').value;
+            const animationUrl = document.getElementById('animationUrl').value;
             const scale = document.getElementById('scale').value;
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = '';
+            resultDiv.className = '';
 
-            if (!markerUrl || !animUrl) {
-                status.className = 'error';
-                status.textContent = 'Please provide both marker and animation URLs';
+            if (!markerUrl || !animationUrl) {
+                resultDiv.textContent = 'Please provide both Marker URL and Animation URL.';
+                resultDiv.className = 'error';
                 return;
             }
 
             try {
-                const { error } = await supabase
+                const { data, error } = await supabase
                     .from('custom_markers')
-                    .insert([
-                        {
-                            marker_url: getDirectLink(markerUrl),
-                            animation_url: getDirectLink(animUrl),
-                            scale: scale
-                        }
-                    ]);
+                    .insert({
+                        marker_url: markerUrl,
+                        animation_url: animationUrl,
+                        scale: scale
+                          
+                    });
 
-                if (error) throw error;
+                if (error) {
+                    throw error;
+                }
 
-                status.className = 'success';
-                status.textContent = 'Upload successful! Redirecting...';
-                
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
-
-            } catch (error) {
-                status.className = 'error';
-                status.textContent = 'Upload failed: ' + error.message;
+                resultDiv.textContent = 'Data uploaded successfully!';
+                resultDiv.className = 'success';
+                console.log('Inserted data:', data);
+            } catch (err) {
+                resultDiv.textContent = 'Upload failed! Please try again.';
+                resultDiv.className = 'error';
+                console.error(err);
             }
-        }
+        });
     </script>
 </body>
 </html>
