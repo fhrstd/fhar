@@ -23,14 +23,15 @@
     <p>Click the button below to test the connection to your Supabase instance.</p>
     <button id="testButton">Test Connection</button>
     <div id="result"></div>
+    
+    <script type="module">
+        import { createClient } from '@supabase/supabase-js'
+        // Replace these with your own Supabase URL and public API key
+        const supabaseUrl = 'https://fdphjxbjnononpxljrgb.supabase.co'
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkcGhqeGJqbm9ub25weGxqcmdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxOTM1MzMsImV4cCI6MjA1Mjc2OTUzM30.4OAWrb2IOvq0lOOPplBzG-hGYrK5BfP-y9sCR4ac3Vc'
 
-    <script>
-        // Replace with your Supabase URL and API key
-        const SUPABASE_URL = "https://fdphjxbjnononpxljrgb.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkcGhqeGJqbm9ub25weGxqcmdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxOTM1MzMsImV4cCI6MjA1Mjc2OTUzM30.4OAWrb2IOvq0lOOPplBzG-hGYrK5BfP-y9sCR4ac3Vc";
-
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+        const supabase = createClient(supabaseUrl, supabaseAnonKey)
+        
         document.getElementById('testButton').addEventListener('click', async () => {
             const resultDiv = document.getElementById('result');
             resultDiv.textContent = 'Testing connection...';
