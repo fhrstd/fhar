@@ -38,7 +38,7 @@
 
             try {
                 const { data, error } = await supabase
-                    .from('your_table_name') // Replace with an actual table name in your Supabase project
+                    .from('custom_markers') // Replace with an actual table name in your Supabase project
                     .select('*')
                     .limit(1);
 
