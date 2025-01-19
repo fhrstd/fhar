@@ -102,12 +102,12 @@
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
         const supabaseUrl = 'https://fdphjxbjnononpxljrgb.supabase.co';
         const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkcGhqeGJqbm9ub25weGxqcmdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxOTM1MzMsImV4cCI6MjA1Mjc2OTUzM30.4OAWrb2IOvq0lOOPplBzG-hGYrK5BfP-y9sCR4ac3Vc';
-    </script>
-    <script>
-         const supabase = await createClient(
+        const supabase = createClient(
             supabaseUrl,
             supabaseAnonKey
         );
+    </script>
+    <script>
         // Convert Google Drive link to direct link
         function getDirectLink(url) {
             if (url.includes('drive.google.com/file/d/')) {
@@ -118,41 +118,42 @@
         }
 
         async function uploadContent() {
-            const status = document.getElementById('status');
-            const markerUrl = document.getElementById('markerUrl').value;
-            const animUrl = document.getElementById('animUrl').value;
-            const scale = document.getElementById('scale').value;
+        const status = document.getElementById('status');
+        const markerUrl = document.getElementById('markerUrl').value;
+        const animUrl = document.getElementById('animUrl').value;
+        const scale = document.getElementById('scale').value;
 
-            if (!markerUrl || !animUrl) {
-                status.className = 'error';
-                status.textContent = 'Please provide both marker and animation URLs';
-                return;
-            }
-
-            try {
-                const { error } = await supabase
-                    .from('custom_markers')
-                    .insert([
-                        {
-                            marker_url: getDirectLink(markerUrl),
-                            animation_url: getDirectLink(animUrl),
-                            scale: scale
-                        }
-                    ]);
-
-                if (error) throw error;
-
-                status.className = 'success';
-                status.textContent = 'Upload successful! Redirecting...';
-                
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
-
-            } catch (error) {
-                status.className = 'error';
-                status.textContent = 'Upload failed: ' + error.message;
-            }
+        if (!markerUrl || !animUrl) {
+            status.className = 'error';
+            status.textContent = 'Please provide both marker and animation URLs';
+            return;
         }
+
+        try {
+            const { error } = await supabase
+                .from('custom_markers')
+                .insert([
+                    {
+                        marker_url: getDirectLink(markerUrl),
+                        animation_url: getDirectLink(animUrl),
+                        scale: scale
+                    }
+                ]);
+
+            if (error) throw error;
+
+            status.className = 'success';
+            status.textContent = 'Upload successful! Redirecting...';
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+
+        } catch (error) {
+            status.className = 'error';
+            status.textContent = 'Upload failed: ' + error.message;
+            console.error('Error details:', error);
+        }
+    }
+         document.getElementById('uploadButton').addEventListener('click', uploadContent);
     </script>
 </html>
