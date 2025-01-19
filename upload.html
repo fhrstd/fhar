@@ -92,7 +92,12 @@
             <input type="text" id="scale" value="1 1 1" placeholder="1 1 1">
             <div class="hint">Adjust size if animation appears too big/small</div>
         </div>
-<script type="module">
+        <button onclick="uploadContent()">Upload</button>
+        <div id="status"></div>
+        <a href="index.html" class="back-link">← Back to AR Viewer</a>
+    </div>
+</body>
+    <script type="module">
         // Initialize Supabase
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
@@ -103,7 +108,8 @@
             supabaseUrl,
             supabaseAnonKey
         );
-
+</script>
+<script>
         // Convert Google Drive link to direct link
         function getDirectLink(url) {
             if (url.includes('drive.google.com/file/d/')) {
@@ -151,9 +157,4 @@
             }
         }
     </script>
-        <button onclick="uploadContent()">Upload</button>
-        <div id="status"></div>
-        <a href="index.html" class="back-link">← Back to AR Viewer</a>
-    </div>
-</body>
 </html>
