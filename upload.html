@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload AR Content</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
@@ -98,9 +99,9 @@
         <a href="index.html" class="back-link">← Back to AR Viewer</a>
     </div>
 
-    <script>
+    <script type="module">
         // Initialize Supabase
-        import { createClient } from '@supabase/supabase-js@2';
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js';
         const supabase = supabase.createClient(
             'https://fdphjxbjnononpxljrgb.supabase.co',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkcGhqeGJqbm9ub25weGxqcmdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxOTM1MzMsImV4cCI6MjA1Mjc2OTUzM30.4OAWrb2IOvq0lOOPplBzG-hGYrK5BfP-y9sCR4ac3Vc'
