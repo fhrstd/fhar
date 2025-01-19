@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload AR Content</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .hint {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 4px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload AR Content</h1>
+        
+        <div class="form-group">
+            <label for="markerUrl">Marker Image URL:</label>
+            <input type="text" id="markerUrl" placeholder="Paste Google Drive link for marker image">
+            <div class="hint">This is your illustration that will be recognized</div>
+        </div>
+
+        <div class="form-group">
+            <label for="animUrl">Animation URL:</label>
+            <input type="text" id="animUrl" placeholder="Paste Google Drive link for animation">
+            <div class="hint">This is what will appear when marker is detected</div>
+        </div>
+
+        <div class="form-group">
+            <label for="scale">Scale (optional):</label>
+            <input type="text" id="scale" value="1 1 1" placeholder="1 1 1">
+            <div class="hint">Adjust size if animation appears too big/small</div>
+        </div>
+
+        <button onclick="uploadContent()">Upload</button>
+        <div id="status"></div>
+        <a href="index.html" class="back-link">← Back to AR Viewer</a>
+    </div>
+
+    <script>
+        // Initialize Supabase
+        const supabase = supabase.createClient(
+            'https://fdphjxbjnononpxljrgb.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkcGhqeGJqbm9ub25weGxqcmdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxOTM1MzMsImV4cCI6MjA1Mjc2OTUzM30.4OAWrb2IOvq0lOOPplBzG-hGYrK5BfP-y9sCR4ac3Vc'
+        );
+
+        // Convert Google Drive link to direct link
+        function getDirectLink(url) {
+            if (url.includes('drive.google.com/file/d/')) {
+                const fileId = url.split('/file/d/')[1].split('/')[0];
+                return `https://drive.google.com/uc?export=view&id=${fileId}`;
+            }
+            return url;
+        }
+
+        async function uploadContent() {
+            const status = document.getElementById('status');
+            const markerUrl = document.getElementById('markerUrl').value;
+            const animUrl = document.getElementById('animUrl').value;
+            const scale = document.getElementById('scale').value;
+
+            if (!markerUrl || !animUrl) {
+                status.className = 'error';
+                status.textContent = 'Please provide both marker and animation URLs';
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('custom_markers')
+                    .insert([
+                        {
+                            marker_url: getDirectLink(markerUrl),
+                            animation_url: getDirectLink(animUrl),
+                            scale: scale
+                        }
+                    ]);
+
+                if (error) throw error;
+
+                status.className = 'success';
+                status.textContent = 'Upload successful! Redirecting...';
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+
+            } catch (error) {
+                status.className = 'error';
+                status.textContent = 'Upload failed: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

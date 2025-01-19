@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Illustration Viewer</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { margin: 0; }
+        #loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 1000;
+        }
+        .upload-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">Loading AR Content...</div>
+    <a href="upload.html" class="upload-btn">Upload New</a>
+
+    <a-scene
+        vr-mode-ui="enabled: false"
+        embedded
+        arjs="sourceType: webcam; debugUIEnabled: false;">
+        
+        <a-assets id="assets"></a-assets>
+        <div id="markers"></div>
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        // Initialize Supabase
+        const supabase = supabase.createClient(
+            'https://fdphjxbjnononpxljrgb.supabase.co',
+		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkcGhqeGJqbm9ub25weGxqcmdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxOTM1MzMsImV4cCI6MjA1Mjc2OTUzM30.4OAWrb2IOvq0lOOPplBzG-hGYrK5BfP-y9sCR4ac3Vc'
+        );
+
+        async function loadMarkers() {
+            try {
+                const { data, error } = await supabase
+                    .from('custom_markers')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const assets = document.getElementById('assets');
+                const markersContainer = document.getElementById('markers');
+
+                data.forEach((item, index) => {
+                    // Add animation asset
+                    const asset = document.createElement('img');
+                    asset.id = `anim-${index}`;
+                    asset.src = item.animation_url;
+                    assets.appendChild(asset);
+
+                    // Create marker
+                    const marker = document.createElement('a-nft');
+                    marker.setAttribute('type', 'nft');
+                    marker.setAttribute('url', item.marker_url);
+                    marker.setAttribute('smooth', 'true');
+                    marker.setAttribute('smoothCount', '10');
+                    marker.setAttribute('smoothTolerance', '0.01');
+                    marker.setAttribute('smoothThreshold', '5');
+
+                    // Add animation to marker
+                    const animation = document.createElement('a-image');
+                    animation.setAttribute('src', `#anim-${index}`);
+                    animation.setAttribute('scale', item.scale || '1 1 1');
+                    animation.setAttribute('position', item.position || '0 0 0');
+                    animation.setAttribute('rotation', item.rotation || '-90 0 0');
+
+                    marker.appendChild(animation);
+                    markersContainer.appendChild(marker);
+                });
+
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        window.onload = loadMarkers;
+    </script>
+</body>
+</html>
