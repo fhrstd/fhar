@@ -130,8 +130,8 @@
                 const { data, error } = await supabase
                     .from('custom_markers')
                     .insert({
-                        marker_url: markerUrl,
-                        animation_url: animationUrl,
+                        marker_url: getDirectLink(markerUrl),
+                        animation_url: getDirectLink(animationUrl),
                         scale: scale
                           
                     });
