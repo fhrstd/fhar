@@ -104,7 +104,6 @@
         const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkcGhqeGJqbm9ub25weGxqcmdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxOTM1MzMsImV4cCI6MjA1Mjc2OTUzM30.4OAWrb2IOvq0lOOPplBzG-hGYrK5BfP-y9sCR4ac3Vc';
 
         export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-        import { supabase } from './supabase-init.js'; // Adjust path if needed
     </script>
     <script>
         // Convert Google Drive link to direct link
@@ -119,9 +118,9 @@
         try {
             const { data, error } = await supabase.from('custom_markers').insert([
                 {
-                    marker_url: 'https://example.com',
-                    animation_url: 'https://example.com',
-                    scale: 1.0,
+                    marker_url: getDirectLink(markerUrl),
+                    animation_url: getDirectLink(animUrl),
+                    scale: scale
                 },
             ]);
 
@@ -134,8 +133,6 @@
             console.error('Unexpected error:', e);
         }
     }
-
     uploadContent();
-         document.getElementById('uploadButton').addEventListener('click', uploadContent);
     </script>
 </html>
