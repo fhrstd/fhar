@@ -15,7 +15,7 @@
     <a-scene embedded arjs="sourceType: webcam; detectionMode: mono; trackingMethosd: best;">
       <!-- Marker Definition for 2D image tracking -->
       <a-marker id="marker" preset="custom" type="pattern" url="" >
-        <a-plane position="0 0 0" rotation="-90 0 0" scale="2 2 1" 
+        <a-plane position="0 0 0" rotation="0 0 0" scale="1 1 1" 
                  src="#gif" material="shader: flat; opacity: 1;">
         </a-plane>
       </a-marker>
@@ -74,7 +74,7 @@
 
   fetchMarkers();
    
-    const marker = document.querySelector('#marker');
+    const marker2 = document.querySelector('#marker');
       marker.addEventListener('markerFound', () => {
       console.log('Marker detected!');
     });
@@ -82,7 +82,7 @@
       console.log('Marker lost!');
     });
 
-   async function fetchMarkers() {
+   async function fetchMarkers2() {
   const { data, error } = await supabase
     .from('custom_markers')
     .select('id, marker_path, animation_path, scale, position, rotation');
