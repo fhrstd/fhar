@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flat AR GIF Viewer</title>
+  <link rel="stylesheet" href="styles.css">
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>AR GIF Viewer</h1>
+    <a-scene embedded arjs="sourceType: webcam; detectionMode: mono; trackingMethosd: best;">
+      <!-- Marker Definition for 2D image tracking -->
+      <a-marker id="marker" preset="custom" type="pattern" url="" >
+        <a-plane position="0 0 0" rotation="-90 0 0" scale="2 2 1" 
+                 src="#gif" material="shader: flat; opacity: 1;">
+        </a-plane>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+  </div>
+ <script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+  const supabaseUrl = 'https://fdphjxbjnononpxljrgb.supabase.co';
+  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkcGhqeGJqbm9ub25weGxqcmdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxOTM1MzMsImV4cCI6MjA1Mjc2OTUzM30.4OAWrb2IOvq0lOOPplBzG-hGYrK5BfP-y9sCR4ac3Vc';
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+  async function fetchMarkers() {
+    const { data, error } = await supabase
+      .from('custom_markers')
+      .select('id, marker_path, animation_path, scale, position, rotation');
+    
+    if (error) {
+      console.error('Error fetching markers:', error);
+      return;
+    }
+
+    if (data.length > 0) {
+      const marker = data[0];
+      const markerURL = await getPublicUrl(marker.marker_path);
+      const animationURL = await getPublicUrl(marker.animation_path);
+      setMarker({ ...marker, marker_url: markerURL, animation_url: animationURL });
+    }
+  }
+
+  async function getPublicUrl(path) {
+    const { data, error } = await supabase.storage
+      .from('marker.animation') // Replace with your bucket name
+      .getPublicUrl(path);
+
+    if (error) {
+      console.error('Error generating public URL:', error);
+      return '';
+    }
+    return data.publicUrl;
+  }
+
+  function setMarker(marker) {
+    const markerURL = marker.marker_url;
+    const animationURL = marker.animation_url;
+
+    document.querySelector('#marker').setAttribute('url', markerURL);
+    const plane = document.querySelector('a-plane');
+    plane.setAttribute('src', animationURL);
+
+    if (marker.scale) plane.setAttribute('scale', marker.scale);
+    if (marker.position) plane.setAttribute('position', marker.position);
+    if (marker.rotation) plane.setAttribute('rotation', marker.rotation);
+  }
+
+  fetchMarkers();
+</script>
+</body>
+</html>
