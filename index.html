@@ -28,7 +28,7 @@
   const supabaseUrl = 'https://fdphjxbjnononpxljrgb.supabase.co';
   const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkcGhqeGJqbm9ub25weGxqcmdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxOTM1MzMsImV4cCI6MjA1Mjc2OTUzM30.4OAWrb2IOvq0lOOPplBzG-hGYrK5BfP-y9sCR4ac3Vc';
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
+  
   async function fetchMarkers() {
     const { data, error } = await supabase
       .from('custom_markers')
@@ -73,6 +73,32 @@
   }
 
   fetchMarkers();
+   
+    const marker = document.querySelector('#marker');
+      marker.addEventListener('markerFound', () => {
+      console.log('Marker detected!');
+    });
+      marker.addEventListener('markerLost', () => {
+      console.log('Marker lost!');
+    });
+
+   async function fetchMarkers() {
+  const { data, error } = await supabase
+    .from('custom_markers')
+    .select('id, marker_path, animation_path, scale, position, rotation');
+  
+  console.log(data, error); // Check data and error in the console
+
+  if (data.length > 0) {
+    const marker = data[0];
+    const markerURL = await getPublicUrl(marker.marker_path);
+    const animationURL = await getPublicUrl(marker.animation_path);
+    setMarker({ ...marker, marker_url: markerURL, animation_url: animationURL });
+  }
+}
+
+   
+   
 </script>
 </body>
 </html>
