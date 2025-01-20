@@ -28,7 +28,18 @@
     const supabaseUrl = 'https://fdphjxbjnononpxljrgb.supabase.co'
     const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkcGhqeGJqbm9ub25weGxqcmdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxOTM1MzMsImV4cCI6MjA1Mjc2OTUzM30.4OAWrb2IOvq0lOOPplBzG-hGYrK5BfP-y9sCR4ac3Vc'
     const supabase = createClient(supabaseUrl, supabaseAnonKey)
-  // Fetch markers from the database
+//Cors enabled header
+    function withCors() {
+      const headers = new Headers();
+      headers.append('Access-Control-Allow-Origin', '*');
+      headers.append(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, referer-path'
+    );
+  return headers;
+}
+    
+// Fetch markers from the database
 async function fetchMarkers() {
   const { data, error } = await supabase
     .from('custom_markers')
